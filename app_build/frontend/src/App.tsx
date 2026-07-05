@@ -49,8 +49,12 @@ function App() {
     return (
       <div className="min-h-screen p-4 md:p-8 bg-gray-50 flex justify-center items-center">
         <Onboarding onComplete={async (p) => {
-          await import('./lib/db').then(m => m.saveProfile(p));
-          setProfile(p);
+          try {
+            await import('./lib/db').then(m => m.saveProfile(p));
+            setProfile(p);
+          } catch (e: any) {
+            import('react-hot-toast').then(toast => toast.default.error(e.message || "Failed to save profile. Check permissions."));
+          }
         }} />
       </div>
     );

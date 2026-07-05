@@ -35,7 +35,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-blue-100"
     >
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome to V H DRAGON</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Welcome to Fruit Billing App</h1>
         <p className="text-gray-500 mt-2">Please set up your farm profile to generate invoices.</p>
       </div>
 
@@ -51,7 +51,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           <input
             type="text"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition uppercase"
-            placeholder="e.g., V H DRAGON"
+            placeholder="e.g., MY FARM NAME"
             value={farmName}
             onChange={(e) => setFarmName(e.target.value.toUpperCase())}
           />
