@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900;
+  }
+}
+
+/* Ensure the invoice container is exactly A4 size for PDF rendering */
+.invoice-container {
+  width: 794px; /* A4 width at 96 DPI */
+  min-height: 1123px; /* A4 height at 96 DPI */
+  background: white;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .invoice-container {
+    box-shadow: none;
+    margin: 0;
+  }
+}
