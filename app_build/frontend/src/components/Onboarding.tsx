@@ -35,7 +35,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-blue-100"
     >
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome to Fruit Billing App</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Fruits Billing & Analytics</h1>
         <p className="text-gray-500 mt-2">Please set up your farm profile to generate invoices.</p>
       </div>
 
