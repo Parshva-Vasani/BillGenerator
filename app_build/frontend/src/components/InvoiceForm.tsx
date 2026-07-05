@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 interface InvoiceFormProps {
   profile: UserProfile;
@@ -16,10 +17,10 @@ interface LineItem {
   id: string;
   srNo: number;
   productName: string;
-  ceret: number;
-  vagan: number;
+  ceret: number | string;
+  vagan: number | string;
   qty: number;
-  rate: number;
+  rate: number | string;
   total: number;
 }
 
@@ -127,7 +128,7 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
   });
 
   const [items, setItems] = useState<LineItem[]>([
-    { id: '1', srNo: 1, productName: 'Dragon Fruit', ceret: 0, vagan: 0, qty: 0, rate: 0, total: 0 }
+    { id: '1', srNo: 1, productName: 'Dragon Fruit', ceret: '', vagan: '', qty: 0, rate: '', total: 0 }
   ]);
   
   const [locale, setLocale] = useState<'en'|'hi'|'gu'>('en');
@@ -163,8 +164,11 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
     (item as any)[field] = value;
 
     if (['ceret', 'vagan', 'rate'].includes(field)) {
-      item.qty = Number((item.ceret * item.vagan).toFixed(3));
-      item.total = Number((item.qty * item.rate).toFixed(2));
+      const c = Number(item.ceret) || 0;
+      const v = Number(item.vagan) || 0;
+      const r = Number(item.rate) || 0;
+      item.qty = Number((c * v).toFixed(3));
+      item.total = Number((item.qty * r).toFixed(2));
     }
     setItems(newItems);
   };
@@ -176,7 +180,7 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
         id: Math.random().toString(36).substr(2, 9),
         srNo: items.length + 1,
         productName: items.length > 0 ? items[items.length - 1].productName : '',
-        ceret: 0, vagan: 0, qty: 0, rate: 0, total: 0
+        ceret: '', vagan: '', qty: 0, rate: '', total: 0
       }
     ]);
   };
@@ -252,8 +256,7 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
           files: [file]
         });
       } else {
-        // Fallback for Desktop (wa.me without specific number)
-        alert('File attachment is not automatically supported on desktop WhatsApp Web. The file will download now, please attach it manually in the chat after selecting the contact!');
+        toast.error('File attachment is not automatically supported on desktop WhatsApp Web. The file will download now, please attach it manually in the chat after selecting the contact!', { duration: 6000 });
         await handleDownload(); // download it for them to attach manually
         window.open(`https://wa.me/?text=${encodeURIComponent(textMsg)}`, '_blank');
       }
@@ -277,11 +280,11 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
         uid: '' // Will be populated in db.ts
       };
       await saveInvoice(record);
-      alert('Invoice Saved Successfully!');
+      toast.success('Invoice Saved Successfully!');
       navigate('/dashboard');
     } catch (e) {
       console.error(e);
-      alert('Failed to save invoice');
+      toast.error('Failed to save invoice');
     }
     setIsSaving(false);
   };
@@ -380,7 +383,25 @@ export default function InvoiceForm({ profile }: InvoiceFormProps) {
           </div>
 
           <div className="flex justify-end pt-4">
-            <button onClick={() => setStep(2)} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-sm w-full md:w-auto">
+            <button 
+              onClick={() => {
+                if (!invoiceMetadata.receiverName.trim()) {
+                  return toast.error('Please enter the Receiver Name');
+                }
+                if (items.length === 0) {
+                  return toast.error('Please add at least one line item');
+                }
+                const hasEmptyProduct = items.some(i => !i.productName.trim());
+                if (hasEmptyProduct) {
+                  return toast.error('Please enter the Product Name for all items');
+                }
+                if (finalAmount <= 0) {
+                  return toast.error('Total amount must be greater than 0');
+                }
+                setStep(2);
+              }} 
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-sm w-full md:w-auto"
+            >
               Preview & Share
             </button>
           </div>

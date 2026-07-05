@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 export default function LoginSignup() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,16 +13,23 @@ export default function LoginSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    if (!email.includes('@')) {
+      return toast.error('Please enter a valid email address.');
+    }
+    if (password.length < 6) {
+      return toast.error('Password must be at least 6 characters long.');
+    }
     setLoading(true);
     try {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
+        toast.success('Successfully logged in!');
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
+        toast.success('Account created successfully!');
       }
     } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+      toast.error(err.message || 'Authentication failed');
     }
     setLoading(false);
   };
@@ -39,11 +47,7 @@ export default function LoginSignup() {
         <p className="text-gray-500 mt-2">{isLogin ? 'Log in to your account' : 'Create a new account'}</p>
       </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-200">
-          {error}
-        </div>
-      )}
+
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>

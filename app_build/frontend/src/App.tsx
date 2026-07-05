@@ -7,7 +7,9 @@ import Profile from './components/Profile';
 import Layout from './components/Layout';
 import { useAuth } from './context/AuthContext';
 import { getProfile, UserProfile } from './lib/db';
+import { getProfile, UserProfile } from './lib/db';
 import Onboarding from './components/Onboarding';
+import { Toaster } from 'react-hot-toast';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
@@ -57,6 +59,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
       {currentUser ? (
         <Layout onLogout={logout}>
           <Routes>
