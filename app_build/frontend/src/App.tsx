@@ -7,7 +7,6 @@ import Profile from './components/Profile';
 import Layout from './components/Layout';
 import { useAuth } from './context/AuthContext';
 import { getProfile, UserProfile } from './lib/db';
-import { getProfile, UserProfile } from './lib/db';
 import Onboarding from './components/Onboarding';
 import { Toaster } from 'react-hot-toast';
 
